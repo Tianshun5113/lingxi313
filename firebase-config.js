@@ -2,6 +2,7 @@
 export const firebaseConfig = {
   apiKey: "AIzaSyD0dJ36obIicZXtlyFyWnh1b4y2LXlWXQA",
   authDomain: "lingxi-4b203.firebaseapp.com",
+  databaseURL: "https://lingxi-4b203-default-rtdb.asia-southeast1.firebasedatabase.app/",
   projectId: "lingxi-4b203",
   storageBucket: "lingxi-4b203.firebasestorage.app",
   messagingSenderId: "1011152674475",
