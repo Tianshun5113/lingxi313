@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111225" />
+  <meta name="description" content="灵犀：两人或三人远程联机，每轮20秒，一直到想出完全相同的词语。" />
+  <title>灵犀 · 词语默契挑战</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./style.css" />
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <div class="background-glow glow-left" aria-hidden="true"></div>
+  <div class="background-glow glow-right" aria-hidden="true"></div>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-icon" aria-hidden="true">✳</span><span>灵犀<span class="brand-period">.</span></span></div>
+      <span class="topbar-right"><span class="online-dot"></span> Firebase 远程联机版</span>
+    </header>
+    <main id="app" aria-live="polite">
+      <div class="startup-loading"><div class="stage-ornament">✦</div>正在连接灵犀……</div>
+    </main>
+    <footer class="footer">同频的瞬间，值得认真收藏。 <span>✦</span> 2 / 3 人 · 每轮 20 秒</footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rooms": {
+      "$code": {
+        ".write": "auth !== null && data.exists() && !newData.exists() && data.child('meta').child('host').val() === auth.uid",
+        "meta": {
+          ".read": "auth !== null",
+          ".write": "auth !== null && ( (!data.exists()\n  && newData.child('host').val() === auth.uid\n  && newData.child('phase').val() === 'lobby'\n  && newData.child('round').val() === 0\n  && newData.child('game').val() === 1\n  && newData.child('currentKey').val() === 'none'\n  && newData.child('startedAt').val() === 0\n) || (data.exists() && newData.child('host').val() === data.child('host').val() && newData.child('capacity').val() === data.child('capacity').val() && newData.child('createdAt').val() === data.child('createdAt').val() && ( (auth.uid === data.child('host').val()\n  && root.child('rooms').child($code).child('players').numChildren() === data.child('capacity').val()\n  && newData.child('phase').val() === 'typing'\n  && newData.child('startedAt').val() >= now - 5000 && newData.child('startedAt').val() <= now + 5000\n  && (\n     (data.child('phase').val() === 'lobby'\n       && newData.child('round').val() === 1\n       && newData.child('game').val() === data.child('game').val())\n     || (data.child('phase').val() === 'reveal'\n       && newData.child('round').val() === data.child('round').val() + 1\n       && newData.child('game').val() === data.child('game').val())\n     || (data.child('phase').val() === 'reveal'\n       && newData.child('round').val() === 1\n       && newData.child('game').val() === data.child('game').val() + 1)\n   )\n) || (root.child('rooms').child($code).child('players').child(auth.uid).exists()\n  && data.child('phase').val() === 'typing'\n  && newData.child('phase').val() === 'reveal'\n  && newData.child('round').val() === data.child('round').val() && newData.child('game').val() === data.child('game').val() && newData.child('currentKey').val() === data.child('currentKey').val() && newData.child('startedAt').val() === data.child('startedAt').val()\n  && (\n    root.child('rooms').child($code).child('rounds').child(data.child('currentKey').val()).child('submitted').numChildren() === data.child('capacity').val()\n    || now >= data.child('startedAt').val() + 20000\n  )\n) )))",
+          ".validate": "newData.hasChildren(['host','capacity','phase','round','game','currentKey','startedAt','createdAt'])\n && newData.child('host').isString()\n && (newData.child('capacity').val() === 2 || newData.child('capacity').val() === 3)\n && newData.child('phase').isString()\n && newData.child('phase').val().matches(/^(lobby|typing|reveal)$/)\n && newData.child('round').isNumber() && newData.child('round').val() >= 0\n && newData.child('game').isNumber() && newData.child('game').val() >= 1\n && newData.child('currentKey').isString()\n && newData.child('currentKey').val().matches(/^(none|g[0-9]+r[0-9]+)$/)\n && newData.child('startedAt').isNumber()\n && newData.child('createdAt').isNumber()"
+        },
+        "players": {
+          ".read": "auth !== null",
+          "$uid": {
+            ".write": "auth !== null && auth.uid === $uid && (\n  (!data.exists() && newData.exists()\n   && root.child('rooms').child($code).child('meta').child('phase').val() === 'lobby'\n   && root.child('rooms').child($code).child('players').numChildren() < root.child('rooms').child($code).child('meta').child('capacity').val())\n  || (data.exists() && !newData.exists()\n   && root.child('rooms').child($code).child('meta').child('phase').val() === 'lobby'\n   && root.child('rooms').child($code).child('meta').child('host').val() !== auth.uid)\n)",
+            ".validate": "newData.hasChildren(['name','joinedAt']) && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 32 && newData.child('joinedAt').isNumber()"
+          }
+        },
+        "rounds": {
+          "$roundKey": {
+            "submitted": {
+              ".read": "auth !== null && root.child('rooms').child($code).child('players').child(auth.uid).exists()",
+              "$uid": {
+                ".write": "auth !== null && root.child('rooms').child($code).child('players').child(auth.uid).exists() && auth.uid === $uid && !data.exists() && newData.val() === true && (root.child('rooms').child($code).child('meta').child('phase').val() === 'typing'\n && root.child('rooms').child($code).child('meta').child('currentKey').val() === $roundKey\n && now >= root.child('rooms').child($code).child('meta').child('startedAt').val()\n && now < root.child('rooms').child($code).child('meta').child('startedAt').val() + 20000)"
+              }
+            },
+            "answers": {
+              ".read": "auth !== null && root.child('rooms').child($code).child('players').child(auth.uid).exists() && (root.child('rooms').child($code).child('meta').child('currentKey').val() !== $roundKey\n  || root.child('rooms').child($code).child('meta').child('phase').val() === 'reveal')",
+              "$uid": {
+                ".read": "auth !== null && root.child('rooms').child($code).child('players').child(auth.uid).exists() && (auth.uid === $uid || (root.child('rooms').child($code).child('meta').child('currentKey').val() !== $roundKey\n  || root.child('rooms').child($code).child('meta').child('phase').val() === 'reveal'))",
+                ".write": "auth !== null && root.child('rooms').child($code).child('players').child(auth.uid).exists() && auth.uid === $uid && !data.exists() && newData.exists() && (root.child('rooms').child($code).child('meta').child('phase').val() === 'typing'\n && root.child('rooms').child($code).child('meta').child('currentKey').val() === $roundKey\n && now >= root.child('rooms').child($code).child('meta').child('startedAt').val()\n && now < root.child('rooms').child($code).child('meta').child('startedAt').val() + 20000)",
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 48"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
